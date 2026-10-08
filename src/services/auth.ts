@@ -17,6 +17,11 @@ export async function signUp(email: string, password: string, role: Role): Promi
     },
   })
   if (error) throw error
+  // Si el email ya estaba registrado y confirmado, Supabase no da error ni manda
+  // email (para no revelar qué cuentas existen): devuelve un usuario sin identidades.
+  if (data.user && data.user.identities?.length === 0) {
+    throw new Error('User already registered')
+  }
   return data.session !== null
 }
 
@@ -46,7 +51,7 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 export function authErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error)
   if (message.includes('Invalid login credentials')) return 'Email o contraseña incorrectos.'
-  if (message.includes('User already registered')) return 'Ya existe una cuenta con ese email.'
+  if (message.includes('User already registered')) return 'Ya existe una cuenta con ese email. Prueba iniciar sesión.'
   if (message.includes('Email not confirmed')) return 'Primero confirma tu email (revisa tu correo).'
   if (message.includes('Password should be')) return 'La contraseña debe tener al menos 6 caracteres.'
   if (message.includes('rate limit')) return 'Demasiados intentos. Espera unos minutos.'
