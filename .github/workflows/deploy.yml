@@ -1,0 +1,51 @@
+# Publica la app en GitHub Pages cada vez que se sube algo a la rama main.
+# Requisito (una sola vez): Settings → Pages → Source: "GitHub Actions".
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite lanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          # Valores públicos a propósito (la seguridad la ponen las policies RLS).
+          # Nunca pongas aquí la clave secret / service_role.
+          VITE_SUPABASE_URL: https://qbbajoufipubevzqoczo.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_eRjB0aan4xDwDNJ4LfKkKg_28NGBRSd
+      # GitHub Pages no conoce las rutas de React (/login, /customer…).
+      # Si alguien abre una de esas URLs directo, Pages sirve 404.html:
+      # al ser una copia de index.html, carga la app y React muestra la página correcta.
+      - run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
