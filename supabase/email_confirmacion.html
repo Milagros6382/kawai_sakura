@@ -1,0 +1,97 @@
+<!--
+  Plantilla del email "Confirm signup" de Supabase Auth.
+  Dónde pegarla: Supabase -> Authentication -> Emails -> Templates -> Confirm signup -> Source
+
+  Asunto (Subject) predeterminado:
+    🎐 Un pequeño deseo te espera, confirma tu email ♡
+  Asuntos alternativos para probar más adelante:
+    🌸 ¡Tu aventura kawaii comienza aquí!
+    ୨୧ One little step into your new universe ✧
+    ♡ Tu cuenta está casi lista, little star.
+    🎀 Una campanita, una cuenta nueva y mil posibilidades.
+
+  {{ .ConfirmationURL }} lo reemplaza Supabase por el link real de confirmación. No cambiarlo.
+  El logo se carga desde GitHub Pages (public/sakura-logo.jpg): tiene que estar publicado.
+  Estilos en línea y tablas a propósito: Gmail, Outlook y Apple Mail ignoran casi todo el CSS externo.
+-->
+<!-- Texto de vista previa (lo que se ve en la bandeja junto al asunto) -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#FFF0F6;">
+  ¡Tu pequeño universo alternativo te está esperando! Confirmá tu email para activar tu cuenta.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF0F6;">
+  <tr>
+    <td align="center" style="padding:32px 12px;">
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background-color:#FFFFFF;border:1px solid #F3D3E2;border-radius:20px;">
+        <tr>
+          <td align="center" style="padding:36px 28px 32px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#68495A;">
+
+            <p style="margin:0 0 18px;font-size:15px;line-height:1;color:#DB8FAF;letter-spacing:1px;">
+              ୨୧ ─────── 🎐 ─────── ୨୧
+            </p>
+
+            <img src="https://milagros6382.github.io/kawai_sakura/sakura-logo.jpg" alt="Kawaii Sakura" width="88" height="88" style="display:block;margin:0 auto 14px;border:0;width:88px;height:88px;">
+
+            <p style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#9F5C7C;font-weight:bold;">
+              Kawaii Sakura
+            </p>
+
+            <h1 style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.2;font-weight:bold;color:#9F5C7C;">
+              Welcome, little star ♡
+            </h1>
+
+            <p style="margin:0 0 22px;font-size:16px;line-height:1.4;color:#BA7295;">
+              ˚₊‧꒰ა ようこそ ໒꒱‧₊˚
+            </p>
+
+            <p style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:1.4;color:#9F5C7C;">
+              ¡Tu pequeño universo alternativo te está esperando!
+            </p>
+
+            <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#68495A;">
+              Gracias por crear tu cuenta. 🌸
+            </p>
+
+            <p style="margin:0 0 28px;font-size:15px;line-height:1.6;color:#68495A;">
+              Antes de comenzar tu aventura entre encajes, lazos y estrellas, necesitamos confirmar tu dirección de correo electrónico.
+            </p>
+
+            <!-- Botón: tabla + link para que se vea bien también en Outlook -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+              <tr>
+                <td align="center" bgcolor="#9F5C7C" style="border-radius:999px;">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 32px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px;">
+                    ˚₊‧ Confirma tu email ‧₊˚
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:16px 0 28px;font-size:13px;line-height:1.5;color:#8A6A7C;">
+              Hacé clic en el botón de confirmación para activar tu cuenta.
+            </p>
+
+            <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#68495A;">
+              🎀 Un mundo de moda japonesa alternativa, pequeños tesoros y nuevas inspiraciones te espera.
+            </p>
+
+            <p style="margin:0 0 26px;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.5;color:#9F5C7C;">
+              ♡ ありがとう (arigatō) — gracias por estar aquí ♡
+            </p>
+
+            <p style="margin:0 0 22px;font-size:12px;line-height:1.5;color:#8A6A7C;">
+              Si no creaste esta cuenta, podés ignorar este mensaje.
+            </p>
+
+            <p style="margin:0;font-size:13px;line-height:1;color:#DB8FAF;">
+              ✧･ﾟ: *✧･ﾟ:* 🌸 *:･ﾟ✧*:･ﾟ✧
+            </p>
+
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>

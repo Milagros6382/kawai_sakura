@@ -1,16 +1,25 @@
-/* Colores y medidas reutilizables */
+/* Colores y medidas reutilizables
+   Identidad kawaii: rosa empolvado, negro tinta, blanco crema y violeta #785e9e */
 :root {
-  --bg: #fff7fa;
-  --card: #ffffff;
-  --text: #4a3b45;
-  --muted: #8c7a86;
-  --border: #f2d4e0;
-  --accent: #e75a92;
-  --accent-dark: #c9437a;
-  --error: #c62828;
+  --bg: #fff0f6; /* rosa pastel */
+  --card: #fffbf5; /* blanco crema */
+  --ink: #2b2028; /* negro tinta (títulos) */
+  --text: #68495a;
+  --muted: #8a6a7c;
+  --border: #f0cfdf;
+  --powder: #db8fae; /* rosa empolvado (adornos y bordes) */
+  --accent: #9f5c7c; /* rosa oscuro (botones: contraste 4.9:1 con blanco) */
+  --accent-dark: #785e9e; /* violeta (hover y enlaces) */
+  --deco: #ba7295; /* rosa decorativo */
+  --success: #4f7a5a;
+  --error: #b3261e;
   --radius: 14px;
 
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Serif elegante para títulos, sans legible para todo lo funcional */
+  --font-title: 'Cormorant Garamond', 'Yu Mincho', 'Hiragino Mincho ProN', Georgia, serif;
+  --font-body: system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font-family: var(--font-body);
   color: var(--text);
   background: var(--bg);
 }
@@ -28,7 +37,9 @@ body {
 h1,
 h2 {
   margin: 0 0 8px;
-  color: var(--text);
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-weight: 700;
 }
 
 a {
@@ -44,6 +55,16 @@ a {
   margin: 0;
 }
 
+.success {
+  color: var(--success);
+  margin: 0;
+}
+
+.small {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
 .center-message {
   text-align: center;
   margin-top: 40vh;
@@ -56,7 +77,7 @@ a {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
-  box-shadow: 0 4px 14px rgba(231, 90, 146, 0.08);
+  box-shadow: 0 6px 20px rgba(159, 92, 124, 0.12);
 }
 
 /* Formularios */
@@ -77,8 +98,12 @@ input[type='number'] {
   font-size: 1rem;
 }
 
+input::placeholder {
+  color: #a78a99;
+}
+
 input:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-dark);
   outline-offset: 1px;
 }
 
@@ -104,11 +129,29 @@ button:disabled {
 button.secondary {
   background: transparent;
   color: var(--accent-dark);
-  border: 1px solid var(--accent);
+  border: 1px solid var(--powder);
 }
 
 button.secondary:hover:not(:disabled) {
   background: #fdeef4;
+}
+
+/* Adornos kawaii (siempre aria-hidden, ver KawaiiDecoration.tsx) */
+.kawaii-deco {
+  display: block;
+  text-align: center;
+  color: var(--deco);
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.kawaii-top {
+  font-size: 1.1rem;
+}
+
+.kawaii-divider {
+  font-size: 0.9rem;
+  color: var(--powder);
 }
 
 /* Login y registro */
@@ -133,6 +176,41 @@ button.secondary:hover:not(:disabled) {
   margin: 0;
 }
 
+.auth-card h1 {
+  font-size: 1.9rem;
+  line-height: 1.15;
+}
+
+/* Nombre de la marca arriba del título */
+.brand {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Aviso destacado (revisar el correo) */
+.notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px dashed var(--powder);
+  text-align: center;
+}
+
+.resend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
 .role-picker {
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -150,6 +228,20 @@ label.radio {
 }
 
 /* Paneles con sesión */
+/* Fondo de las pantallas con sesión. El degradado oscurece un poco la foto
+   para que el texto de las tarjetas se siga leyendo bien. */
+.app-bg {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(20, 0, 15, 0.45), rgba(20, 0, 15, 0.45)),
+    url('./assets/fondo.jpg') center / cover no-repeat fixed;
+}
+
+.app-bg .header {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+}
+
 .header {
   display: flex;
   justify-content: space-between;

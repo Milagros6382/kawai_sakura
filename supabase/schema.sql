@@ -42,6 +42,10 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+-- Solo la usa el trigger (que no necesita este permiso): así nadie puede
+-- llamarla por la API en /rest/v1/rpc/handle_new_user.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+
 
 -- ---------------------------------------------------------------------
 -- 2. CUSTOMER_MEASUREMENTS: las 3 medidas de cada cliente (en cm)
@@ -80,6 +84,7 @@ create index if not exists products_supplier_id_idx on public.products (supplier
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = ''
 as $$
 begin
   new.updated_at := now();
@@ -97,8 +102,13 @@ create trigger customer_measurements_updated_at
 -- Función auxiliar: rol del usuario que hace la petición
 -- "security definer" la ejecuta con permisos del dueño, así las policies
 -- pueden consultar profiles sin depender de las policies de profiles.
+-- Vive en el schema "private", que la API no expone: las policies la
+-- pueden usar, pero nadie la puede llamar por /rest/v1/rpc.
 -- ---------------------------------------------------------------------
-create or replace function public.current_user_role()
+create schema if not exists private;
+grant usage on schema private to authenticated;
+
+create or replace function private.current_user_role()
 returns text
 language sql
 stable
@@ -106,6 +116,9 @@ security definer set search_path = ''
 as $$
   select role from public.profiles where id = auth.uid();
 $$;
+
+revoke execute on function private.current_user_role() from public, anon;
+grant execute on function private.current_user_role() to authenticated;
 
 
 -- =====================================================================
@@ -134,7 +147,7 @@ create policy "medidas: ver las propias" on public.customer_measurements
 drop policy if exists "medidas: crear las propias" on public.customer_measurements;
 create policy "medidas: crear las propias" on public.customer_measurements
   for insert to authenticated
-  with check (user_id = auth.uid() and public.current_user_role() = 'customer');
+  with check (user_id = auth.uid() and private.current_user_role() = 'customer');
 
 drop policy if exists "medidas: editar las propias" on public.customer_measurements;
 create policy "medidas: editar las propias" on public.customer_measurements
@@ -148,12 +161,12 @@ create policy "medidas: editar las propias" on public.customer_measurements
 drop policy if exists "productos: ver" on public.products;
 create policy "productos: ver" on public.products
   for select to authenticated
-  using (supplier_id = auth.uid() or public.current_user_role() = 'customer');
+  using (supplier_id = auth.uid() or private.current_user_role() = 'customer');
 
 drop policy if exists "productos: crear propios" on public.products;
 create policy "productos: crear propios" on public.products
   for insert to authenticated
-  with check (supplier_id = auth.uid() and public.current_user_role() = 'supplier');
+  with check (supplier_id = auth.uid() and private.current_user_role() = 'supplier');
 
 drop policy if exists "productos: editar propios" on public.products;
 create policy "productos: editar propios" on public.products
@@ -187,7 +200,7 @@ create policy "imagenes: proveedor sube en su carpeta" on storage.objects
   with check (
     bucket_id = 'product-images'
     and (storage.foldername(name))[1] = auth.uid()::text
-    and public.current_user_role() = 'supplier'
+    and private.current_user_role() = 'supplier'
   );
 
 drop policy if exists "imagenes: proveedor edita su carpeta" on storage.objects;
@@ -199,3 +212,10 @@ drop policy if exists "imagenes: proveedor elimina su carpeta" on storage.object
 create policy "imagenes: proveedor elimina su carpeta" on storage.objects
   for delete to authenticated
   using (bucket_id = 'product-images' and (storage.foldername(name))[1] = auth.uid()::text);
+
+
+-- ---------------------------------------------------------------------
+-- Limpieza: versión vieja de la función (antes estaba en public y se podía
+-- llamar por la API). Va al final porque las policies de arriba ya no la usan.
+-- ---------------------------------------------------------------------
+drop function if exists public.current_user_role();

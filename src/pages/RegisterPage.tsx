@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
+import { COPY } from '../lib/kawaii'
 import { authErrorMessage, HOME_BY_ROLE, signUp } from '../services/auth'
+import { KawaiiDecoration, KawaiiDivider } from '../components/KawaiiDecoration'
+import { ResendConfirmation } from '../components/ResendConfirmation'
 import type { Role } from '../types/database'
 
 export function RegisterPage() {
@@ -30,15 +33,23 @@ export function RegisterPage() {
     }
   }
 
+  // Solo llegamos acá si Supabase aceptó el registro de verdad
   if (needsConfirmation) {
     return (
       <main className="auth-page">
-        <div className="card auth-card">
-          <h1>📧 Revisa tu correo</h1>
+        <div className="card auth-card" role="status">
+          <KawaiiDecoration className="kawaii-top">୨୧ ─── 🎐 ─── ୨୧</KawaiiDecoration>
+          <h1>{COPY.registerSuccess}</h1>
+          <p className="notice">{COPY.checkInbox}</p>
           <p>
+            {COPY.emailSent}
+            <br />
             Te enviamos un enlace a <strong>{email}</strong>. Confírmalo y luego{' '}
             <Link to="/login">inicia sesión</Link>.
           </p>
+          <p className="muted small">¿No llegó? Revisá la carpeta de spam o pedí otra:</p>
+          <ResendConfirmation email={email} startWithCooldown />
+          <KawaiiDivider />
         </div>
       </main>
     )
@@ -47,16 +58,32 @@ export function RegisterPage() {
   return (
     <main className="auth-page">
       <form className="card auth-card" onSubmit={handleSubmit}>
-        <h1>🌸 Kawaii Sakura</h1>
-        <p className="muted">Crea tu cuenta</p>
+        <KawaiiDecoration className="kawaii-top">˚₊‧꒰ა ようこそ ໒꒱‧₊˚</KawaiiDecoration>
+        <p className="brand">Kawaii Sakura</p>
+        <h1>{COPY.registerTitle}</h1>
 
         <label>
           Email
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder={COPY.emailPlaceholder}
+          />
         </label>
         <label>
           Contraseña (mínimo 6 caracteres)
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} autoComplete="new-password" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+            autoComplete="new-password"
+            placeholder={COPY.passwordPlaceholder}
+          />
         </label>
 
         <fieldset className="role-picker">
@@ -71,14 +98,19 @@ export function RegisterPage() {
           </label>
         </fieldset>
 
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button type="submit" disabled={busy}>
-          {busy ? 'Creando cuenta…' : 'Registrarme'}
+          {busy ? 'Creando cuenta…' : COPY.registerButton}
         </button>
         <p className="muted">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </p>
+        <KawaiiDivider />
       </form>
     </main>
   )

@@ -15,5 +15,6 @@ export function ProtectedRoute({ role, children }: { role: Role; children: React
   if (!profile) return <p className="center-message">No se encontró tu perfil.</p>
   if (profile.role !== role) return <Navigate to={HOME_BY_ROLE[profile.role]} replace />
 
-  return children
+  // Las pantallas con sesión llevan la imagen de fondo (ver .app-bg en index.css)
+  return <div className="app-bg">{children}</div>
 }
